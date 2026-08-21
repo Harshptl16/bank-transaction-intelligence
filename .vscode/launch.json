@@ -1,0 +1,42 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Generate sample data",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/etl/generate_sample.py",
+      "args": ["--rows", "20000", "--out", "data/raw/paysim_tiny.csv"],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Run transform (tiny)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/etl/transform.py",
+      "args": [
+        "--input", "data/raw/paysim_tiny.csv",
+        "--output", "data/processed",
+        "--shuffle-partitions", "8"
+      ],
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env",
+      "justMyCode": true
+    },
+    {
+      "name": "Run transform (full PaySim)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/etl/transform.py",
+      "args": [
+        "--input", "data/raw/PS_20174392719_1491204439457_log.csv",
+        "--output", "data/processed",
+        "--shuffle-partitions", "200"
+      ],
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env",
+      "justMyCode": true
+    }
+  ]
+}
