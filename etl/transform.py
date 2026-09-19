@@ -379,11 +379,7 @@ def main():
     parser.add_argument("--shuffle-partitions", type=int, default=8,
                         help="Raise toward 200 when running on a real cluster")
     args = parser.parse_args()
-
-    # Loads .env from the current working directory if present. This means
-    # the script works the same way whether launched via VS Code's debug
-    # config (which was already setting envFile), a plain terminal, or CI —
-    # no manual `export`/`$env:` step required as long as .env exists.
+    
     load_dotenv()
 
     salt = os.environ.get("MASKING_SALT")
@@ -428,25 +424,10 @@ def main():
 
         out = args.output.rstrip("/")
 
-        # Dimensions are small — coalesce to a single file each. Without this
-        # Spark writes one file per shuffle partition, producing 8 tiny files
-        # per dimension for no benefit.
         dim_account.coalesce(1).write.mode("overwrite").parquet(f"{out}/dim_account")
         dim_merchant.coalesce(1).write.mode("overwrite").parquet(f"{out}/dim_merchant")
         dim_date.coalesce(1).write.mode("overwrite").parquet(f"{out}/dim_date")
 
-        # --- Partitioning choice ------------------------------------------
-        # Partitioning on date_key (YYYYMMDDHH) creates one directory per HOUR
-        # — 744 directories for PaySim's 30-day window. Combined with the
-        # shuffle partition count that produced 5,733 files averaging 4 KB on
-        # a 20k-row test, inflating the dataset to 64 MB of mostly Parquet
-        # footer metadata. This is the classic "small files problem": each
-        # file carries fixed overhead, and query planners spend more time
-        # listing files than reading data.
-        #
-        # Partitioning on calendar_date instead gives 30 directories, and the
-        # repartition() ensures one reasonably-sized file per day rather than
-        # one per shuffle partition per day.
         (
             fact
             .repartition("partition_date")
