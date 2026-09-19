@@ -12,11 +12,11 @@ Built on the PaySim synthetic financial transaction dataset.
 |---|---|
 | 0 — Setup & sample data | Done |
 | 1 — PySpark ETL (clean, mask, dimension build) | Done |
-| 2 — Azure infrastructure | Not started |
-| 3 — Warehouse loading + SCD Type 2 | Schema done, loader pending |
-| 4 — Analytical SQL | Not started |
-| 5 — Dashboards | Not started |
-| 6 — Findings write-up | Not started |
+| 2 — Azure infrastructure | Done |
+| 3 — Warehouse loading + SCD Type 2 | Done |
+| 4 — Analytical SQL | Done |
+| 5 — Dashboards | Done |
+| 6 — Findings write-up | Done |
 
 ---
 
